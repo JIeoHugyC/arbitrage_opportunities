@@ -1,4 +1,4 @@
-mod arbitraage_manager;
+mod arbitrage_manager;
 mod exchange;
 
 fn main() {
