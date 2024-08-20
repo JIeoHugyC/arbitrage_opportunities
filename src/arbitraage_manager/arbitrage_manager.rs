@@ -6,6 +6,7 @@ use crate::exchange::exchange_update::{BestPrices};
 
 const MESSAGE_BUFFER_SIZE: usize = 100;
 
+/// An arbitrage manager that manages multiple exchanges and analyzes for opportunities
 struct ArbitrageManager {
     /// List of exchanges to be managed in the arbitrage manager
     exchanges: Vec<Arc<dyn Exchange>>,
@@ -21,10 +22,12 @@ impl ArbitrageManager {
         }
     }
 
+    /// Add a new exchange to the arbitrage manager to manage and update its order book
     fn add_exchange(&mut self, exchange: Arc<dyn Exchange>) {
         self.exchanges.push(exchange);
     }
 
+    /// Start the arbitrage manager and continuously update the order books for the added exchanges
     async fn run(&mut self) {
         let (tx, mut rx) = mpsc::channel(MESSAGE_BUFFER_SIZE);
 
@@ -41,6 +44,7 @@ impl ArbitrageManager {
         }
     }
 
+    /// Analyze for opportunities in the arbitrage manager based on the best prices of the added exchanges
     async fn analyze_opportunities(&self) {
         todo!(); // Implement logic to analyze opportunities based on best prices and trade signals
     }
