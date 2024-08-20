@@ -6,7 +6,7 @@ use crate::exchange::exchange::Exchange;
 use crate::exchange::exchange_update::{BestPrices, ExchangeUpdate};
 use crate::exchange::order_book::OrderBook;
 
-struct BybitExchange {
+pub struct BybitExchange {
     name: String,
     orderbook: Arc<RwLock<OrderBook>>,
 }
@@ -22,6 +22,7 @@ impl Exchange for BybitExchange {
 
     async fn start(&self, update_sender: Sender<ExchangeUpdate>) {
         loop {
+            println!("Starting Bybit exchange...");
             // todo: connect to bybit API
             // todo: receive orderbook
             let orderbook = self.orderbook.read().await;
