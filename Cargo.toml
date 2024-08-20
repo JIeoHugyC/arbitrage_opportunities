@@ -1,6 +1,6 @@
 [package]
 name = "arbitrage_opportunities"
-version = "0.0.1"
+version = "0.0.2"
 edition = "2021"
 
 [dependencies]
@@ -16,3 +16,4 @@ async-trait = "0.1.81"
 thiserror = "1.0.63"
 once_cell ="1.19.0"
 futures-util = "0.3.30"
+futures = "0.3.30"
