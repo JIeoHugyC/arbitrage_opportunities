@@ -9,7 +9,7 @@ mod exchange;
 
 #[tokio::main]
 async fn main() {
-    dotenv().ok().expect("Failed to load.env file");
+    dotenv().ok();
     let mut arbitrage_manager = ArbitrageManager::new();
     let bybit_exchange = Arc::new(BybitExchange::new());
     arbitrage_manager.add_exchange(bybit_exchange);
