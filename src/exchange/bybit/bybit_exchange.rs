@@ -23,6 +23,10 @@ impl Exchange for BybitExchange {
         }
     }
 
+    fn name(&self) -> String {
+        self.name.clone()
+    }
+
     async fn start(&self, trading_pair: ETradingPair, order_book_update_sender: Sender<ExchangeUpdate>) {
         loop {
             println!("Starting Bybit exchange...");

@@ -10,7 +10,7 @@ impl ArbitrageManager {
         let (tx, mut rx) = mpsc::channel(MESSAGE_BUFFER_SIZE);
 
         for exchange in &self.exchanges {
-            let exchange_clone = exchange.clone();
+            let exchange_clone = exchange.1.clone();
             let tx_clone = tx.clone();
             let trading_pair = self.trading_pair.clone();
             tokio::spawn(async move {

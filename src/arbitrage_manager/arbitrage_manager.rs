@@ -7,7 +7,7 @@ use crate::trading_pair::ETradingPair;
 /// An arbitrage manager that manages multiple exchanges and analyzes for opportunities
 pub struct ArbitrageManager {
     /// List of exchanges to be managed in the arbitrage manager
-    pub(super) exchanges: Vec<Arc<dyn Exchange>>,
+    pub(super) exchanges: HashMap<String, Arc<dyn Exchange>>,
     /// Cache best prices for each exchange
     pub(super) best_prices: HashMap<String, BestPrices>,
     /// The trading pair for which the arbitrage manager is managing exchanges
@@ -17,7 +17,7 @@ pub struct ArbitrageManager {
 impl ArbitrageManager {
     pub(crate) fn new(trading_pair: ETradingPair) -> Self {
         ArbitrageManager {
-            exchanges: Vec::new(),
+            exchanges: HashMap::new(),
             best_prices: HashMap::new(),
             trading_pair,
         }

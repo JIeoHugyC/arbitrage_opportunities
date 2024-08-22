@@ -5,6 +5,6 @@ use crate::exchange::exchange::Exchange;
 impl ArbitrageManager {
     /// Add a new exchange to the arbitrage manager to manage and update its order book
     pub(crate) fn add_exchange(&mut self, exchange: Arc<dyn Exchange>) {
-        self.exchanges.push(exchange);
+        self.exchanges.insert(exchange.name(), exchange);
     }
 }

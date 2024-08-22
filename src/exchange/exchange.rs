@@ -12,6 +12,9 @@ pub trait Exchange: Send + Sync {
     /// Create a new instance of the exchange
     fn new() -> Self where Self: Sized;
 
+    /// Get the name of the exchange
+    fn name(&self) -> String;
+
     /// Start the exchange and continuously update the order book
     async fn start(&self, trading_pair: ETradingPair, update_sender: Sender<ExchangeUpdate>);
 

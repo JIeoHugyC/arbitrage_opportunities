@@ -40,7 +40,7 @@ impl BybitExchange {
         }
 
         orderbook.sequence = update.data.seq;
-        orderbook.cts = update.cts;
+        orderbook.last_updated = update.cts;
 
         // println!("Applied orderbook {:?} at {}. New seq: {}", update.update_type, update.ts, orderbook.sequence);
         // println!("Best bid: {:?}", orderbook.get_best_bid());
