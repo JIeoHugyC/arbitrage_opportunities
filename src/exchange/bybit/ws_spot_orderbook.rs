@@ -1,4 +1,5 @@
 use std::str::FromStr;
+use chrono::{DateTime, Utc};
 use serde::{Deserialize, Deserializer};
 
 /// Order book update type
@@ -14,15 +15,17 @@ pub enum UpdateType {
 pub struct OrderBookUpdate {
     /// Topic name
     pub topic: String,
-    /// The timestamp (ms) that the system generates the data
-    pub ts: u64,
+    /// The timestamp when the system generates this update message
+    #[serde(with = "timestamp_ms")]
+    pub ts: DateTime<Utc>,
     /// Data type. `snapshot`,`delta`
     #[serde(rename = "type")]
     pub update_type: UpdateType,
     /// The actual order book data
     pub data: OrderBookData,
-    /// The timestamp from the match engine when this orderbook data is produced. It can be correlated with `T` from public trade channel
-    pub cts: u64,
+    /// The timestamp from the match engine when this orderbook data was produced
+    #[serde(with = "timestamp_ms")]
+    pub cts: DateTime<Utc>,
 }
 
 /// Represents the data of an order book update
@@ -55,9 +58,32 @@ impl<'de> Deserialize<'de> for PriceLevel {
         D: Deserializer<'de>,
     {
         let (price_str, size_str): (String, String) = Deserialize::deserialize(deserializer)?;
-        let price = f64::from_str(&price_str).map_err(serde::de::Error::custom)?;
-        let size = f64::from_str(&size_str).map_err(serde::de::Error::custom)?;
+
+        let parse_float = |s: &str, field: &str| {
+            f64::from_str(s).map_err(|e| {
+                serde::de::Error::custom(format!("Failed to parse {} '{}' as f64: {}", field, s, e))
+            })
+        };
+
+        let price = parse_float(&price_str, "price")?;
+        let size = parse_float(&size_str, "size")?;
+
         Ok(PriceLevel(price, size))
+    }
+}
+
+mod timestamp_ms {
+    use chrono::{DateTime, TimeZone, Utc};
+    use serde::{self, Deserialize, Deserializer};
+
+    pub fn deserialize<'de, D>(deserializer: D) -> Result<DateTime<Utc>, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        let ms = i64::deserialize(deserializer)?;
+        Utc.timestamp_millis_opt(ms)
+            .single()
+            .ok_or_else(|| serde::de::Error::custom("invalid timestamp"))
     }
 }
 
@@ -80,6 +106,7 @@ impl PriceLevel {
 
 #[cfg(test)]
 mod tests {
+    use chrono::TimeZone;
     use super::*;
     use serde_json;
 
@@ -107,9 +134,13 @@ mod tests {
 
         let update = result.unwrap();
         assert_eq!(update.topic, "orderbook.50.BTCUSDC");
-        assert_eq!(update.ts, 1724318672920);
+        let expected_ts = Utc.timestamp_millis_opt(1724318672920).unwrap();
+        assert_eq!(update.ts, expected_ts, "Incorrect system timestamp (ts)");
+
+        let expected_cts = Utc.timestamp_millis_opt(1724318672915).unwrap();
+        assert_eq!(update.cts, expected_cts, "Incorrect match engine timestamp (cts)");
+
         assert_eq!(update.update_type, UpdateType::Snapshot);
-        assert_eq!(update.cts, 1724318672915);
 
         let data = update.data;
         assert_eq!(data.s, "BTCUSDC");
