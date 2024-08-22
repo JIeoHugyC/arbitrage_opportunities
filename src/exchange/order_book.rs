@@ -1,13 +1,19 @@
 use std::collections::BTreeMap;
+use chrono::{DateTime, Utc};
+use ordered_float::OrderedFloat;
 
-type TPrice = f64;
-type TVolume = f64;
+pub(crate) type TPrice = OrderedFloat<f64>;
+pub(super) type TVolume = f64;
 
 /// An order book for a single market pair
 /// It maintains both buy and sell orders in sorted order of price
 pub struct OrderBook {
-    bids: BTreeMap<TPrice, TVolume>,
-    asks: BTreeMap<TPrice, TVolume>,
+    pub bids: BTreeMap<TPrice, TVolume>,
+    pub asks: BTreeMap<TPrice, TVolume>,
+    /// The timestamp from the match engine when this orderbook data was produced
+    pub last_updated: DateTime<Utc>,
+    /// Cross sequence
+    pub sequence: u64,
 }
 
 impl OrderBook {
@@ -15,6 +21,8 @@ impl OrderBook {
         OrderBook {
             bids: BTreeMap::new(),
             asks: BTreeMap::new(),
+            last_updated: Utc::now(),
+            sequence: 0,
         }
     }
 

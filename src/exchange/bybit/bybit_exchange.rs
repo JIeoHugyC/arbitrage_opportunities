@@ -1,14 +1,17 @@
 use std::sync::Arc;
+use std::time::Duration;
 use async_trait::async_trait;
 use tokio::sync::mpsc::Sender;
 use tokio::sync::RwLock;
+use tokio::time::sleep;
 use crate::exchange::exchange::Exchange;
-use crate::exchange::exchange_update::{BestPrices, ExchangeUpdate};
+use crate::exchange::exchange_update::{ExchangeUpdate};
 use crate::exchange::order_book::OrderBook;
+use crate::trading_pair::ETradingPair;
 
 pub struct BybitExchange {
-    name: String,
-    orderbook: Arc<RwLock<OrderBook>>,
+    pub(crate) name: String,
+    pub(crate) orderbook: Arc<RwLock<OrderBook>>,
 }
 
 #[async_trait]
@@ -20,28 +23,26 @@ impl Exchange for BybitExchange {
         }
     }
 
-    async fn start(&self, update_sender: Sender<ExchangeUpdate>) {
+    fn name(&self) -> String {
+        self.name.clone()
+    }
+
+    async fn start(&self, trading_pair: ETradingPair, order_book_update_sender: Sender<ExchangeUpdate>) {
         loop {
             println!("Starting Bybit exchange...");
-            // todo: connect to bybit API
-            // todo: receive orderbook
-            let orderbook = self.orderbook.read().await;
-            // todo: update orderbook with received data
-            // ...
-            let best_bid = orderbook.get_best_bid().unwrap_or(0.0);
-            let best_ask = orderbook.get_best_ask().unwrap_or(f64::MAX);
-            drop(orderbook);
-
-            let update = ExchangeUpdate {
-                exchange_name: self.name.clone(),
-                best_prices: BestPrices {
-                    best_bid,
-                    best_ask,
-                },
-            };
-            if update_sender.send(update).await.is_err() {
-                break;
+            match self.connect_and_listen(&trading_pair, &order_book_update_sender).await {
+                Ok(_) => {
+                    println!("Bybit WebSocket connection has been closed");
+                }
+                Err(e) => {
+                    eprintln!("Error in Bybit WebSocket connection: {:?}", e);
+                }
             }
+
+            // If we're here, it means the connection was closed or an error occurred
+            // Wait for a short time before attempting to reconnect
+            sleep(Duration::from_secs(1)).await;
+            println!("Attempting to reconnect to Bybit WebSocket...");
         }
     }
 
