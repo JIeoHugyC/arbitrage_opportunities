@@ -3,6 +3,7 @@ use std::sync::Arc;
 use tokio::sync::mpsc;
 use crate::exchange::exchange::Exchange;
 use crate::exchange::exchange_update::{BestPrices};
+use crate::trading_pair::ETradingPair;
 
 const MESSAGE_BUFFER_SIZE: usize = 100;
 
@@ -12,13 +13,16 @@ pub struct ArbitrageManager {
     exchanges: Vec<Arc<dyn Exchange>>,
     /// Cache best prices for each exchange
     best_prices: HashMap<String, BestPrices>,
+    /// The trading pair for which the arbitrage manager is managing exchanges
+    trading_pair: ETradingPair,
 }
 
 impl ArbitrageManager {
-    pub(crate) fn new() -> Self {
+    pub(crate) fn new(trading_pair: ETradingPair) -> Self {
         ArbitrageManager {
             exchanges: Vec::new(),
             best_prices: HashMap::new(),
+            trading_pair,
         }
     }
 
@@ -34,8 +38,9 @@ impl ArbitrageManager {
         for exchange in &self.exchanges {
             let exchange_clone = exchange.clone();
             let tx_clone = tx.clone();
+            let trading_pair = self.trading_pair.clone();
             tokio::spawn(async move {
-                exchange_clone.start(tx_clone).await;
+                exchange_clone.start(trading_pair, tx_clone).await;
             });
         }
 

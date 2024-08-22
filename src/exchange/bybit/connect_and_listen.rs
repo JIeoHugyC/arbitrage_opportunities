@@ -11,6 +11,7 @@ use crate::exchange::bybit::ws_spot_orderbook::{OrderBookUpdate};
 use crate::exchange::bybit::ws_spot_subscribe::SubscribeRequest;
 use crate::exchange::bybit::ws_subscribe_response::SubscribeResponse;
 use crate::exchange::exchange_update::ExchangeUpdate;
+use crate::trading_pair::ETradingPair;
 
 const PING_INTERVAL: Duration = Duration::from_secs(1);
 const PONG_TIMEOUT: Duration = Duration::from_secs(5);
@@ -18,10 +19,14 @@ const PONG_TIMEOUT: Duration = Duration::from_secs(5);
 impl BybitExchange {
     pub async fn connect_and_listen(
         &self,
+        trading_pair: &ETradingPair,
         order_book_update_sender: &Sender<ExchangeUpdate>
     ) -> Result<(), Box<dyn std::error::Error>> {
         let url = env::var("BYBIT_WS_URL").expect("BYBIT_WS_URL must be set");
-        let instrument = env::var("TRADING_INSTRUMENT").expect("TRADING_INSTRUMENT must be set");
+        let instrument = match trading_pair {
+            ETradingPair::BtcUsdc => "BTCUSDC".to_string(),
+            ETradingPair::SolUsdc => "SOLUSDC".to_string(),
+        };
 
         let (ws_stream, _) = connect_async(url).await?;
         let (mut write, mut read) = ws_stream.split();

@@ -1,13 +1,13 @@
 use std::sync::Arc;
 use std::time::Duration;
 use async_trait::async_trait;
-use ordered_float::OrderedFloat;
 use tokio::sync::mpsc::Sender;
 use tokio::sync::RwLock;
 use tokio::time::sleep;
 use crate::exchange::exchange::Exchange;
-use crate::exchange::exchange_update::{BestPrices, ExchangeUpdate};
+use crate::exchange::exchange_update::{ExchangeUpdate};
 use crate::exchange::order_book::OrderBook;
+use crate::trading_pair::ETradingPair;
 
 pub struct BybitExchange {
     name: String,
@@ -23,10 +23,10 @@ impl Exchange for BybitExchange {
         }
     }
 
-    async fn start(&self, order_book_update_sender: Sender<ExchangeUpdate>) {
+    async fn start(&self, trading_pair: ETradingPair, order_book_update_sender: Sender<ExchangeUpdate>) {
         loop {
             println!("Starting Bybit exchange...");
-            match self.connect_and_listen(&order_book_update_sender).await {
+            match self.connect_and_listen(&trading_pair, &order_book_update_sender).await {
                 Ok(_) => {
                     println!("Bybit WebSocket connection has been closed");
                 }
