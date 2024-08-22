@@ -1,11 +1,17 @@
 use std::collections::BTreeMap;
 use ordered_float::OrderedFloat;
+use tokio::sync::mpsc::Sender;
 use crate::exchange::bybit::bybit_exchange::BybitExchange;
 use crate::exchange::bybit::ws_spot_orderbook::{OrderBookUpdate, PriceLevel, UpdateType};
+use crate::exchange::exchange_update::{BestPrices, ExchangeUpdate};
 use crate::exchange::order_book::{OrderBook, TPrice, TVolume};
 
 impl BybitExchange {
-    pub(crate) async fn process_orderbook_update(&self, update: OrderBookUpdate) {
+    pub(crate) async fn process_orderbook_update(
+        &self,
+        order_book_update_sender: &Sender<ExchangeUpdate>,
+        update: OrderBookUpdate)
+    {
         let mut orderbook = self.orderbook.write().await;
 
         // Check if this update is newer than our current state
@@ -14,7 +20,7 @@ impl BybitExchange {
             return;
         }
 
-        println!("Processing orderbook update: {:?}", update.update_type);
+        // println!("Processing orderbook update: {:?}", update.update_type);
 
         match update.update_type {
             UpdateType::Snapshot => {
@@ -36,9 +42,21 @@ impl BybitExchange {
         orderbook.sequence = update.data.seq;
         orderbook.cts = update.cts;
 
-        println!("Applied orderbook {:?} at {}. New seq: {}", update.update_type, update.ts, orderbook.sequence);
-        println!("Best bid: {:?}", orderbook.get_best_bid());
-        println!("Best ask: {:?}", orderbook.get_best_ask());
+        // println!("Applied orderbook {:?} at {}. New seq: {}", update.update_type, update.ts, orderbook.sequence);
+        // println!("Best bid: {:?}", orderbook.get_best_bid());
+        // println!("Best ask: {:?}", orderbook.get_best_ask());
+        order_book_update_sender.send(ExchangeUpdate {
+            exchange_name: self.name.clone(),
+            best_prices: BestPrices {
+                best_bid: orderbook.get_best_bid(),
+                best_ask: orderbook.get_best_ask(),
+            },
+        })
+            .await
+            .map_err(|e| {
+                eprintln!("Failed to send order book update: {}", e);
+            })
+            .unwrap_or(());
     }
     fn apply_updates(&self, side: &mut BTreeMap<TPrice, TVolume>, updates: &[PriceLevel]) {
         for price_level in updates {

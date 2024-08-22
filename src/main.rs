@@ -1,5 +1,6 @@
 use std::sync::Arc;
 use dotenv::dotenv;
+use strum::IntoEnumIterator;
 use crate::arbitrage_manager::arbitrage_manager::ArbitrageManager;
 use crate::exchange::bybit::bybit_exchange::BybitExchange;
 use crate::exchange::exchange::Exchange;
@@ -12,6 +13,9 @@ mod trading_pair;
 #[tokio::main]
 async fn main() {
     dotenv().ok();
+    for pair in ETradingPair::iter() {
+        println!("Supported currency: {}", pair);
+    }
     let mut arbitrage_manager = ArbitrageManager::new(ETradingPair::BtcUsdc);
     let bybit_exchange = Arc::new(BybitExchange::new());
     arbitrage_manager.add_exchange(bybit_exchange);

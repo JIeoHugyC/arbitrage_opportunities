@@ -10,7 +10,7 @@ use crate::exchange::order_book::OrderBook;
 use crate::trading_pair::ETradingPair;
 
 pub struct BybitExchange {
-    name: String,
+    pub(crate) name: String,
     pub(crate) orderbook: Arc<RwLock<OrderBook>>,
 }
 

@@ -10,7 +10,7 @@ use crate::exchange::bybit::ws_pong::PongMessage;
 use crate::exchange::bybit::ws_spot_orderbook::{OrderBookUpdate};
 use crate::exchange::bybit::ws_spot_subscribe::SubscribeRequest;
 use crate::exchange::bybit::ws_subscribe_response::SubscribeResponse;
-use crate::exchange::exchange_update::ExchangeUpdate;
+use crate::exchange::exchange_update::{ExchangeUpdate};
 use crate::trading_pair::ETradingPair;
 
 const PING_INTERVAL: Duration = Duration::from_secs(1);
@@ -20,7 +20,7 @@ impl BybitExchange {
     pub async fn connect_and_listen(
         &self,
         trading_pair: &ETradingPair,
-        order_book_update_sender: &Sender<ExchangeUpdate>
+        order_book_update_sender: &Sender<ExchangeUpdate>,
     ) -> Result<(), Box<dyn std::error::Error>> {
         let url = env::var("BYBIT_WS_URL").expect("BYBIT_WS_URL must be set");
         let instrument = match trading_pair {
@@ -48,8 +48,8 @@ impl BybitExchange {
                     match message? {
                         Message::Text(text) => {
                             if let Ok(orderbook_update) = serde_json::from_str::<OrderBookUpdate>(&text) {
-                                self.process_orderbook_update(orderbook_update).await;
-                            } else if let Ok(pong) = serde_json::from_str::<PongMessage>(&text) {
+                                self.process_orderbook_update(order_book_update_sender, orderbook_update).await;
+                            } else if let Ok(_pong) = serde_json::from_str::<PongMessage>(&text) {
                                 last_pong = Instant::now();
                             } else if let Ok(subscribe_response) = serde_json::from_str::<SubscribeResponse>(&text) {
                                 println!("Subscribed to: {:?}", subscribe_response);
