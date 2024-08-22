@@ -5,11 +5,11 @@ use futures_util::{SinkExt, StreamExt};
 use tokio_tungstenite::{connect_async, tungstenite::protocol::Message};
 use crate::exchange::bybit::ws_ping::PingMessage;
 use crate::exchange::bybit::ws_pong::PongMessage;
-use crate::exchange::bybit::ws_spot_orderbook::OrderBookUpdate;
+use crate::exchange::bybit::ws_spot_orderbook::{OrderBookUpdate, UpdateType};
 use crate::exchange::bybit::ws_spot_subscribe::SubscribeRequest;
 use crate::exchange::bybit::ws_subscribe_response::SubscribeResponse;
 
-const PING_INTERVAL: Duration = Duration::from_secs(20);
+const PING_INTERVAL: Duration = Duration::from_secs(1);
 const PONG_TIMEOUT: Duration = Duration::from_secs(5);
 
 pub struct BybitWebSocket {}
@@ -38,13 +38,13 @@ impl BybitWebSocket {
                 Some(message) = read.next() => {
                     match message? {
                         Message::Text(text) => {
-                            if let Ok(pong) = serde_json::from_str::<PongMessage>(&text) {
+                            if let Ok(orderbook_update) = serde_json::from_str::<OrderBookUpdate>(&text) {
+                                self.process_orderbook_update(orderbook_update);
+                            } else if let Ok(pong) = serde_json::from_str::<PongMessage>(&text) {
+                                println!("Received pong: {:?}", pong);
                                 last_pong = Instant::now();
                             } else if let Ok(subscribe_response) = serde_json::from_str::<SubscribeResponse>(&text) {
-                                println!("Subscription response: {:?}", subscribe_response);
-                            } else if let Ok(orderbook_update) = serde_json::from_str::<OrderBookUpdate>(&text) {
-                                // Process the orderbook update
-                                self.process_orderbook_update(orderbook_update);
+                                println!("Subscribed to: {:?}", subscribe_response);
                             } else {
                                 println!("Received unknown message: {}", text);
                             }
@@ -67,7 +67,8 @@ impl BybitWebSocket {
     }
 
     fn process_orderbook_update(&self, update: OrderBookUpdate) {
-        // Implement orderbook update processing logic here
-        println!("Received orderbook update: {:?}", update);
+        if update.update_type != UpdateType::Delta {
+            println!("Received orderbook update: {:?}", update);
+        }
     }
 }

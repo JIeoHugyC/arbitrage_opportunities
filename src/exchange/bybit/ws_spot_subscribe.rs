@@ -13,7 +13,7 @@ pub struct SubscribeRequest {
 impl SubscribeRequest {
     /// Creates a new subscription request for the given symbols
     pub(crate) fn new(symbols: &[String]) -> Self {
-        let depth = 1;
+        let depth = 50;
         let args = symbols
             .iter()
             .map(|symbol| format!("orderbook.{}.{}", depth, symbol))
