@@ -3,6 +3,7 @@ use solana_sdk::pubkey::Pubkey;
 use crate::exchange::dexnow::data_structures::line_px::LinePx;
 
 /// Contains data about spot market
+#[derive(Default)]
 pub struct Spot {
     pub bids_tree_account: Pubkey,
     pub asks_tree_account: Pubkey,

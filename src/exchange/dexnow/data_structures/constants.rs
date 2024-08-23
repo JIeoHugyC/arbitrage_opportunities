@@ -35,7 +35,7 @@ pub const I128_SIZE: u8 = 16;
 pub const I32_SIZE: u8 = 4;
 pub const I64_SIZE: u8 = 8;
 pub const INSTR_DYNAMIC_TAG: u8 = 7;
-pub const INSTR_STATIC_TAG: u8 = 6;
+pub const INSTR_STATIC_TAG: u32 = 6;
 pub const INSTR_TRACE_TAG: u8 = 8;
 pub const M1_CANDLES_CAPACITY: u16 = 10080;
 pub const M15_CANDLES_CAPACITY: u16 = 2688;
@@ -60,7 +60,7 @@ pub const SPOT_DAY_CANDLES_TAG: u8 = 21;
 pub const SPOT_LINES_TAG: u8 = 18;
 pub const SPOT_MAPS_TAG: u8 = 10;
 pub const STRIKES_COUNT: u8 = 100;
-pub const TOKEN_TAG: u8 = 4;
+pub const TOKEN_TAG: u32 = 4;
 pub const U32_SIZE: u8 = 4;
 pub const U8_SIZE: u8 = 1;
 

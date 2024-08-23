@@ -4,6 +4,7 @@ use crate::exchange::dexnow::data_structures::derivative::Derivative;
 use crate::exchange::dexnow::data_structures::spot::Spot;
 
 /// Contains data about instrument
+#[derive(Default)]
 pub struct Instrument {
     pub static_account: Pubkey,
     /// Account that stores all trading data about instrument

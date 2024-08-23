@@ -3,6 +3,7 @@ use crate::exchange::dexnow::data_structures::futures::Futures;
 use crate::exchange::dexnow::data_structures::option_strike::OptionStrike;
 
 /// Contains general data about derivative
+#[derive(Default)]
 pub struct Derivative {
     /// Derivative instance ID
     pub instance_id: Option<u64>,
