@@ -1,6 +1,7 @@
 use std::collections::HashMap;
+use std::str::FromStr;
 use solana_client::rpc_config::{RpcAccountInfoConfig, RpcProgramAccountsConfig};
-use solana_account_decoder::{UiAccountEncoding};
+use solana_account_decoder::{UiAccountEncoding, UiDataSliceConfig};
 use solana_client::rpc_filter::{Memcmp, MemcmpEncodedBytes, RpcFilterType};
 use solana_sdk::account::Account;
 use solana_sdk::pubkey::Pubkey;
@@ -12,8 +13,12 @@ use crate::exchange::dexnow::data_structures::instrument::Instrument;
 use crate::exchange::dexnow::data_structures::spot::Spot;
 use crate::exchange::dexnow::data_structures::token::Token;
 use crate::exchange::dexnow::engine::Engine;
+use crate::exchange::dexnow::get_instrument_id::GetInstrIdArgs;
+
+const SOL_TOKEN_ID: u32 = 0;
 
 impl Engine {
+
     fn read_pubkey(data: &[u8], offset: usize) -> Result<Pubkey, Box<dyn std::error::Error>> {
         if data.len() < offset + 32 {
             return Err("Insufficient data for Pubkey".into());
@@ -153,6 +158,20 @@ impl Engine {
             });
         }
 
+        let usdc_token_id = self.get_token_id(&Pubkey::from_str("A2Pz6rVyXuadFkKnhMXd1w9xgSrZd8m8sEGpuGuyFhaj").unwrap()).await.unwrap();
+        let instr_id = self.get_instr_id(GetInstrIdArgs{
+            base_crncy_token_id: usdc_token_id.unwrap(),
+            asset_token_id: SOL_TOKEN_ID,
+        }).await.unwrap();
+        println!("USDC dyn acc: {:?}, instr id: {:?}", usdc_token_id, instr_id);
+
+        if let Some(instr_id) = instr_id {
+            let target_instrument =
+                self.instruments.values().find(|instr| instr.id == instr_id as u64);
+            if let Some(target_instrument) = target_instrument {
+                println!("Target instrument: {:?}", target_instrument.dynamic_account);
+            }
+        }
         Ok(())
     }
 }
