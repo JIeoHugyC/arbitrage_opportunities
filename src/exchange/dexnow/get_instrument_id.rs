@@ -9,11 +9,16 @@ pub struct GetInstrIdArgs {
 }
 
 impl Engine {
-    /**
-     * Get Token ID from mint public key if this token registered on DEXnow.io
-     * @param mint Public key
-     * @returns Token ID
-     */
+    /// Get instrument ID from asset and base currency token IDs
+    ///
+    /// # Arguments
+    ///
+    /// * `asset_token_id` - The ID of the asset token
+    /// * `base_crncy_token_id` - The ID of the base currency token
+    ///
+    /// # Returns
+    ///
+    /// Returns Token ID if this token registered on DEXnow.io
     pub async fn get_instr_id(&self, args: GetInstrIdArgs) -> Result<Option<u32>, Box<dyn std::error::Error>> {
         let mut buf = [0u8; 16];
         buf[0..4].copy_from_slice(&(self.version as u32).to_le_bytes());

@@ -5,11 +5,15 @@ use crate::exchange::dexnow::data_structures::constants::TOKEN_ACCOUNT_ID_OFFSET
 use crate::exchange::dexnow::engine::Engine;
 
 impl Engine {
-    /**
-     * Get Token ID from mint public key if this token registered on DEXnow.io
-     * @param mint Public key
-     * @returns Token ID
-     */
+    /// Get Token ID from mint public key if this token registered on DEXnow.io
+    ///
+    /// # Arguments
+    ///
+    /// * `mint` - Public key
+    ///
+    /// # Returns
+    ///
+    /// Token ID
     pub async fn get_token_id(&self, mint: &Pubkey) -> Result<Option<u32>, Box<dyn std::error::Error>> {
         let mut buf = mint.to_bytes();
         buf[28..32].copy_from_slice(&(self.version as u32).to_le_bytes());
