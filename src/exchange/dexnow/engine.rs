@@ -2,7 +2,6 @@ use solana_client::nonblocking::rpc_client::RpcClient;
 use solana_sdk::{
     pubkey::Pubkey,
     signature::Keypair,
-    signer::Signer,
 };
 use crate::exchange::dexnow::data_structures::instrument::Instrument;
 use crate::exchange::dexnow::data_structures::token::Token;
