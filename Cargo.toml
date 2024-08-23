@@ -21,3 +21,5 @@ tokio-tungstenite = { version = "0.23.1", features = ["native-tls"] }
 ordered-float = "4.2.2"
 solana-sdk = "2.0.6"
 solana-client = "2.0.6"
+bytemuck = "1.17.0"
+borsh = "1.5.1"
