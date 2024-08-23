@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 /// Contains data about orderbook line
 pub struct LinePx {
     /// Price

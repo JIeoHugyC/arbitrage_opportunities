@@ -23,7 +23,7 @@ impl Exchange for DexnowExchange {
     fn new() -> Self {
         let rpc_client = RpcClient::new(env::var("SOLANA_RPC_URL").unwrap());
         let root_account = Pubkey::from_str(&*env::var("SOLANA_ROOT_ACCOUNT").unwrap()).unwrap();
-        let program_id = Pubkey::from_str(&*env::var("SOLANA_PROGRAM_ID").unwrap()).unwrap();;
+        let program_id = Pubkey::from_str(&*env::var("SOLANA_PROGRAM_ID").unwrap()).unwrap();
 
         DexnowExchange {
             name: "DEXnow".to_string(),

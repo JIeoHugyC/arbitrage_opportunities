@@ -1,28 +1,31 @@
+#![allow(dead_code)]
 use solana_client::nonblocking::rpc_client::RpcClient;
 use solana_sdk::{
     pubkey::Pubkey,
     signature::Keypair,
 };
+use solana_sdk::address_lookup_table::AddressLookupTableAccount;
 use crate::exchange::dexnow::data_structures::instrument::Instrument;
 use crate::exchange::dexnow::data_structures::token::Token;
 
 pub struct Engine {
-    version: u8,
-    connection: RpcClient,
-    program_id: Pubkey,
-    dexnow_authority: Pubkey,
-    root_account: Pubkey,
-    distrib_account: Pubkey,
-    community_account: Pubkey,
-    lut_account: Option<Pubkey>,
-    wallet: Option<Keypair>,
-    original_client_id: Option<u64>,
-    client_primary_account: Option<Pubkey>,
-    client_drv_account: Option<Pubkey>,
-    client_dexnow_account: Option<Pubkey>,
-    client_lut_account: Option<Pubkey>,
-    tokens: std::collections::HashMap<u64, Token>,
-    instruments: std::collections::HashMap<u64, Instrument>,
+    pub version: u8,
+    pub connection: RpcClient,
+    pub program_id: Pubkey,
+    pub dexnow_authority: Pubkey,
+    pub root_account: Pubkey,
+    pub distrib_account: Pubkey,
+    pub community_account: Pubkey,
+    pub lut_account: Option<Pubkey>,
+    // pub lut: Option<AddressLookupTableAccount>,
+    pub wallet: Option<Keypair>,
+    pub original_client_id: Option<u64>,
+    pub client_primary_account: Option<Pubkey>,
+    pub client_drv_account: Option<Pubkey>,
+    pub client_dexnow_account: Option<Pubkey>,
+    pub client_lut_account: Option<Pubkey>,
+    pub tokens: std::collections::HashMap<u64, Token>,
+    pub instruments: std::collections::HashMap<u64, Instrument>,
 }
 
 impl Engine {

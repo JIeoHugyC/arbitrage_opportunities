@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 use solana_sdk::pubkey::Pubkey;
 
 /// Contains data about Token

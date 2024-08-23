@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 use solana_sdk::pubkey::Pubkey;
 use crate::exchange::dexnow::data_structures::derivative::Derivative;
 use crate::exchange::dexnow::data_structures::spot::Spot;

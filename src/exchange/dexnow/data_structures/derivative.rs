@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 use crate::exchange::dexnow::data_structures::futures::Futures;
 use crate::exchange::dexnow::data_structures::option_strike::OptionStrike;
 

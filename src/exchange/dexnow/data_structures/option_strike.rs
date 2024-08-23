@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 /// Contains data about option strike
 pub struct OptionStrike {
     /// Strike ID
