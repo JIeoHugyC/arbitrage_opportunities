@@ -1,6 +1,7 @@
 use std::collections::HashMap;
 use solana_client::rpc_config::{RpcAccountInfoConfig, RpcProgramAccountsConfig};
-use solana_client::rpc_filter::{Memcmp, RpcFilterType};
+use solana_account_decoder::{UiAccountEncoding};
+use solana_client::rpc_filter::{Memcmp, MemcmpEncodedBytes, RpcFilterType};
 use solana_client::rpc_filter::MemcmpEncodedBytes::Base58;
 use solana_sdk::account::Account;
 use solana_sdk::pubkey::Pubkey;
@@ -24,15 +25,16 @@ impl Engine {
         let mut tag_buf = [0u8; 8];
         tag_buf[0..4].copy_from_slice(&tag.to_le_bytes());
         tag_buf[4..8].copy_from_slice(&(self.version as u32).to_le_bytes());
+        let encoded_tag_buf = base64::encode(tag_buf);
 
         let config = RpcProgramAccountsConfig {
             filters: Some(vec![
-                RpcFilterType::Memcmp(Memcmp::new(0, Base58(bs58::encode(tag_buf).into_string()))),
+                RpcFilterType::Memcmp(Memcmp::new(0, MemcmpEncodedBytes::Base64(encoded_tag_buf))),
             ]),
-            account_config: RpcAccountInfoConfig{
+            account_config: RpcAccountInfoConfig {
                 commitment: None,
                 data_slice: None,
-                encoding: None,
+                encoding: Some(UiAccountEncoding::Base64),
                 min_context_slot: None,
             },
             with_context: Some(false),

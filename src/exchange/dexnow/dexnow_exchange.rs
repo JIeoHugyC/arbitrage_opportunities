@@ -7,14 +7,14 @@ use async_trait::async_trait;
 use std::sync::Arc;
 use solana_client::nonblocking::rpc_client::RpcClient;
 use solana_sdk::pubkey::Pubkey;
-use tokio::sync::RwLock;
+use tokio::sync::{Mutex, RwLock};
 use tokio::sync::mpsc::Sender;
 use crate::exchange::exchange_update::ExchangeUpdate;
 use crate::trading_pair::ETradingPair;
 
 pub struct DexnowExchange {
     name: String,
-    engine: Engine,
+    engine: Arc<Mutex<Engine>>,
     orderbook: Arc<RwLock<OrderBook>>,
 }
 
@@ -22,12 +22,12 @@ pub struct DexnowExchange {
 impl Exchange for DexnowExchange {
     fn new() -> Self {
         let rpc_client = RpcClient::new(env::var("SOLANA_RPC_URL").unwrap());
-        let root_account = Pubkey::from_str(&*env::var("SOLANA_ROOT_ACCOUNT").unwrap()).unwrap();
-        let program_id = Pubkey::from_str(&*env::var("SOLANA_PROGRAM_ID").unwrap()).unwrap();
+        let root_account = Pubkey::from_str(&*env::var("ROOT_ACCOUNT_PK").unwrap()).unwrap();
+        let program_id = Pubkey::from_str(&*env::var("PROGRAM_ID_PK").unwrap()).unwrap();
 
         DexnowExchange {
             name: "DEXnow".to_string(),
-            engine: Engine::new(rpc_client, root_account, program_id),
+            engine: Arc::new(Mutex::new(Engine::new(rpc_client, root_account, program_id))),
             orderbook: Arc::new(RwLock::new(OrderBook::new())),
         }
     }
@@ -37,7 +37,8 @@ impl Exchange for DexnowExchange {
     }
 
     async fn start(&self, trading_pair: ETradingPair, update_sender: Sender<ExchangeUpdate>) {
-        // self.engine.
+        let mut engine = self.engine.lock().await;
+        engine.initialize().await.unwrap();
     }
 
     fn get_order_book(&self) -> Arc<RwLock<OrderBook>> {
