@@ -1,6 +1,7 @@
 use serde::Deserialize;
 
 /// Represents a pong message received from the server
+#[allow(dead_code)]
 #[derive(Debug, Deserialize)]
 pub struct PongMessage {
     /// Indicates whether the ping was successful

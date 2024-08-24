@@ -7,6 +7,8 @@ lazy_static! {
     pub static ref ADDRESS_LOOKUP_TABLE_PROGRAM_ID: Pubkey = Pubkey::from_str("AddressLookupTab1e1111111111111111111111111").unwrap();
 }
 
+pub const U32_BIT_31 : u32 = 1<<31;
+pub const U32_BIT_30 : u32 = 1<<30;
 pub const DEC: u64 = 1_000_000_000;
 pub const NULL_ORDER: u16 = 0xFFFF;
 pub const NULL_TASK: u16 = 0xFFFF;

@@ -10,6 +10,7 @@ pub enum UpdateType {
     Delta,
 }
 
+#[allow(dead_code)]
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct OrderBookUpdate {
@@ -29,6 +30,7 @@ pub struct OrderBookUpdate {
 }
 
 /// Represents the data of an order book update
+#[allow(dead_code)]
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct OrderBookData {

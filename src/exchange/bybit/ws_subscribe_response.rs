@@ -1,6 +1,7 @@
 use serde::Deserialize;
 
 /// Represents the response to a subscription request
+#[allow(dead_code)]
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct SubscribeResponse {

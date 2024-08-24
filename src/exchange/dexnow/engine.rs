@@ -4,7 +4,6 @@ use solana_sdk::{
     pubkey::Pubkey,
     signature::Keypair,
 };
-use solana_sdk::address_lookup_table::AddressLookupTableAccount;
 use crate::exchange::dexnow::data_structures::instrument::Instrument;
 use crate::exchange::dexnow::data_structures::token::Token;
 

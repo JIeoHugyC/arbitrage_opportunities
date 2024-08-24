@@ -3,7 +3,7 @@ use crate::exchange::dexnow::data_structures::constants::*;
 use crate::exchange::dexnow::data_structures::instr_dynamic_account::InstrDynamicAccount;
 use crate::exchange::dexnow::data_structures::line_px::LinePx;
 use crate::exchange::dexnow::engine::Engine;
-use crate::exchange::dexnow::utils::read_int_uint::{read_u32, read_i64};
+use crate::exchange::dexnow::utils::read_basic_types::{read_u32, read_i64};
 
 impl Engine {
     pub fn decode_instr_dynamic_account(&self, account: &Account) -> InstrDynamicAccount {

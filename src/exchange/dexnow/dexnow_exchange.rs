@@ -36,7 +36,7 @@ impl Exchange for DexnowExchange {
         self.name.clone()
     }
 
-    async fn start(&self, trading_pair: ETradingPair, update_sender: Sender<ExchangeUpdate>) {
+    async fn start(&self, _trading_pair: ETradingPair, _update_sender: Sender<ExchangeUpdate>) {
         let mut engine = self.engine.lock().await;
         engine.initialize().await.unwrap();
     }
