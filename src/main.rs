@@ -3,6 +3,7 @@ use dotenv::dotenv;
 use strum::IntoEnumIterator;
 use crate::arbitrage_manager::arbitrage_manager::ArbitrageManager;
 use crate::exchange::bybit::bybit_exchange::BybitExchange;
+use crate::exchange::dexnow::dexnow_exchange::DexnowExchange;
 use crate::exchange::exchange::Exchange;
 use crate::trading_pair::ETradingPair;
 
@@ -18,6 +19,8 @@ async fn main() {
     }
     let mut arbitrage_manager = ArbitrageManager::new(ETradingPair::BtcUsdc);
     let bybit_exchange = Arc::new(BybitExchange::new());
-    arbitrage_manager.add_exchange(bybit_exchange);
+    let dexnow_exchange = Arc::new(DexnowExchange::new());
+    // arbitrage_manager.add_exchange(bybit_exchange);
+    arbitrage_manager.add_exchange(dexnow_exchange);
     arbitrage_manager.run().await;
 }
