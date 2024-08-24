@@ -40,7 +40,7 @@ pub const INSTR_TRACE_TAG: u8 = 8;
 pub const M1_CANDLES_CAPACITY: u16 = 10080;
 pub const M15_CANDLES_CAPACITY: u16 = 2688;
 pub const MAPS_SIZE: u32 = 42160;
-pub const MARKET_DEPTH: u8 = 20;
+pub const MARKET_DEPTH: usize = 20;
 pub const MAX_DURATION: u8 = 28;
 pub const MAX_LINES: u16 = 2048;
 pub const MAX_ORDERS: u16 = 14336;
@@ -138,3 +138,8 @@ pub const TASK_STATIC_ASK_ORDERS_ADDRESS_OFFSET: usize = 224;
 pub const TASK_STATIC_LINES_ADDRESS_OFFSET: usize = 256;
 pub const TASK_STATIC_MASK_OFFSET: usize = 288;
 pub const TASK_STATIC_SIZE: usize = 296;
+
+
+pub const INSTR_DYNAMIC_ACCOUNT_ID_OFFSET: usize = 40;
+pub const INSTR_DYNAMIC_ACCOUNT_BIDS_OFFSET: usize = 384;
+pub const INSTR_DYNAMIC_ACCOUNT_ASKS_OFFSET: usize = 704;
