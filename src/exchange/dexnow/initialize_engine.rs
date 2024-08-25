@@ -137,6 +137,7 @@ impl Engine {
                 if let Ok(dyn_acc) = dyn_acc {
                     let dyn_data = self.decode_instr_dynamic_account(&dyn_acc);
                     println!("Dynamic account data: {:?}", dyn_data);
+                    self.connect_and_listen(&target_instrument.dynamic_account).await.expect("TODO: panic message");
                 }
             }
         }
