@@ -49,8 +49,8 @@ impl DEXnowEngine {
                     Some(message) = read.next() => {
                         match message? {
                             Message::Text(text) => {
-                                if let Ok(subscription) = serde_json::from_str::<SubscriptionResponse>(&text) {
-                                    println!("[INFO][DEXnow] Subscription confirmed: {:?}", subscription);
+                                if let Ok(_subscription) = serde_json::from_str::<SubscriptionResponse>(&text) {
+                                    // println!("[INFO][DEXnow] Subscription confirmed: {:?}", subscription);
                                 } else if let Ok(notification) = serde_json::from_str::<AccountNotification>(&text) {
                                     // println!("Account notification: {:?}", notification.params.subscription);
                                     let account_data = notification.params.result.value.data;

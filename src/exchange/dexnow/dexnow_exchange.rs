@@ -40,7 +40,7 @@ impl Exchange for DexnowExchange {
 
     async fn start(&self, trading_pair: ETradingPair, update_sender: Sender<ExchangeUpdate>) {
         let mut engine = self.engine.lock().await;
-        engine.initialize(trading_pair, update_sender).await.unwrap();
+        engine.initialize(trading_pair, update_sender).await.expect("[ERROR][DEXnow] Failed to initialize engine, please, reboot the application");
     }
 
     fn get_order_book(&self) -> Arc<RwLock<OrderBook>> {

@@ -63,7 +63,7 @@ impl BybitExchange {
             }
 
             if last_pong.elapsed() > PONG_TIMEOUT {
-                println!("No pong received within timeout, reconnecting...");
+                println!("[ERROR][Bybit] No pong received within timeout, reconnecting...");
                 break;
             }
         }

@@ -1,6 +1,6 @@
 [package]
 name = "arbitrage_opportunities"
-version = "0.0.5"
+version = "0.0.6"
 edition = "2021"
 
 [dependencies]
@@ -24,3 +24,4 @@ solana-client = "2.0.6"
 lazy_static = "1.5.0"
 solana-account-decoder = "2.0.6"
 base64 = "0.22.1"
+colored = "2.1.0"

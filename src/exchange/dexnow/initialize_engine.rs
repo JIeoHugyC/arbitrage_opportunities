@@ -140,7 +140,7 @@ impl DEXnowEngine {
             base_crncy_token_id: usdc_token_id.unwrap(),
             asset_token_id: SOL_TOKEN_ID,
         }).await.unwrap();
-        println!("USDC dyn acc: {:?}, instr id: {:?}", usdc_token_id, instr_id);
+        // println!("USDC dyn acc: {:?}, instr id: {:?}", usdc_token_id, instr_id);
 
         if let Some(instr_id) = instr_id {
             let target_instrument =
