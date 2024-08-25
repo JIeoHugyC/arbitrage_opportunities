@@ -6,19 +6,30 @@ use tokio_tungstenite::{connect_async, tungstenite::protocol::Message};
 use solana_sdk::pubkey::Pubkey;
 use solana_sdk::account::Account;
 use solana_sdk::commitment_config::CommitmentLevel;
+use tokio::sync::mpsc::Sender;
 use crate::exchange::dexnow::engine::Engine;
 use crate::exchange::dexnow::solana::account_notification::AccountNotification;
 use crate::exchange::dexnow::solana::account_subscribe::SubscribeMessage;
 use crate::exchange::dexnow::solana::subscription_response::SubscriptionResponse;
+use crate::exchange::exchange_update::ExchangeUpdate;
 
 const PING_INTERVAL: Duration = Duration::from_secs(1);
 const PONG_TIMEOUT: Duration = Duration::from_secs(5);
 
 impl Engine {
-    pub async fn connect_and_listen(&self, account_pubkey: &Pubkey) -> Result<(), Box<dyn std::error::Error>> {
+    pub async fn connect_and_listen(
+        &self,
+        account_pubkey: &Pubkey,
+        order_book_update_sender: &Sender<ExchangeUpdate>,
+    ) -> Result<(), Box<dyn std::error::Error>> {
         let ws_url = env::var("SOLANA_WS_URL").expect("SOLANA_WS_URL must be set");
 
         loop {
+            let dyn_acc = self.connection.get_account(&account_pubkey).await;
+            if let Ok(dyn_acc) = dyn_acc {
+                let dyn_data = self.decode_instr_dynamic_account(&dyn_acc.data);
+                println!("Dynamic account data: {:?}", dyn_data);
+            }
             println!("Connecting to Solana WebSocket to listen DEXnow account {}...", account_pubkey);
             let (ws_stream, _) = connect_async(&ws_url).await?;
             let (mut write, mut read) = ws_stream.split();

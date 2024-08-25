@@ -2,6 +2,7 @@ use std::collections::HashMap;
 use std::str::FromStr;
 use solana_sdk::pubkey::Pubkey;
 use solana_sdk::{system_program};
+use tokio::sync::mpsc::Sender;
 use crate::exchange::dexnow::data_structures::constants::*;
 use crate::exchange::dexnow::data_structures::derivative::Derivative;
 use crate::exchange::dexnow::data_structures::futures::Futures;
@@ -11,11 +12,22 @@ use crate::exchange::dexnow::data_structures::token::Token;
 use crate::exchange::dexnow::engine::Engine;
 use crate::exchange::dexnow::get_instrument_id::GetInstrIdArgs;
 use crate::exchange::dexnow::utils::read_basic_types::{read_pubkey, read_u32};
+use crate::exchange::exchange_update::ExchangeUpdate;
+use crate::trading_pair::ETradingPair;
 
 const SOL_TOKEN_ID: u32 = 0;
 
 impl Engine {
-    pub async fn initialize(&mut self) -> Result<(), Box<dyn std::error::Error>> {
+    pub async fn initialize(
+        &mut self,
+        trading_pair: ETradingPair,
+        update_sender: Sender<ExchangeUpdate>,
+    ) -> Result<(), Box<dyn std::error::Error>> {
+        let token_pubkey = Pubkey::from_str(match trading_pair {
+            ETradingPair::BtcUsdc => return Err("DEXnow don't support BTC now".into()),
+            ETradingPair::SolUsdc => "A2Pz6rVyXuadFkKnhMXd1w9xgSrZd8m8sEGpuGuyFhaj",
+        })?;
+
         let root_info = self.connection.get_account(&self.root_account).await?;
         if root_info.data.len() < ROOT_ACCOUNT_SIZE {
             return Err("Invalid Root Account".into());
@@ -121,7 +133,8 @@ impl Engine {
             });
         }
 
-        let usdc_token_id = self.get_token_id(&Pubkey::from_str("A2Pz6rVyXuadFkKnhMXd1w9xgSrZd8m8sEGpuGuyFhaj").unwrap()).await.unwrap();
+        let usdc_token_id = self.get_token_id(&token_pubkey).await.unwrap();
+
         let instr_id = self.get_instr_id(GetInstrIdArgs {
             base_crncy_token_id: usdc_token_id.unwrap(),
             asset_token_id: SOL_TOKEN_ID,
@@ -133,12 +146,7 @@ impl Engine {
                 self.instruments.values().find(|instr| instr.id == instr_id as u64);
             if let Some(target_instrument) = target_instrument {
                 println!("Target instrument: {:?}", target_instrument.dynamic_account);
-                let dyn_acc = self.connection.get_account(&target_instrument.dynamic_account).await;
-                if let Ok(dyn_acc) = dyn_acc {
-                    let dyn_data = self.decode_instr_dynamic_account(&dyn_acc.data);
-                    println!("Dynamic account data: {:?}", dyn_data);
-                    self.connect_and_listen(&target_instrument.dynamic_account).await.expect("TODO: panic message");
-                }
+                self.connect_and_listen(&target_instrument.dynamic_account, &update_sender).await?;
             }
         }
         Ok(())

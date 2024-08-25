@@ -17,7 +17,7 @@ async fn main() {
     for pair in ETradingPair::iter() {
         println!("Supported currency: {}", pair);
     }
-    let mut arbitrage_manager = ArbitrageManager::new(ETradingPair::BtcUsdc);
+    let mut arbitrage_manager = ArbitrageManager::new(ETradingPair::SolUsdc);
     let bybit_exchange = Arc::new(BybitExchange::new());
     let dexnow_exchange = Arc::new(DexnowExchange::new());
     // arbitrage_manager.add_exchange(bybit_exchange);
