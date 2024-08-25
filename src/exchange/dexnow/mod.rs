@@ -10,4 +10,4 @@ mod utils;
 mod find_account_by_tag;
 mod connect_and_listen;
 mod solana;
-mod process_orderbook_update;
+pub(super) mod process_orderbook_update;

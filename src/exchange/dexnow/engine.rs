@@ -6,13 +6,16 @@ use solana_sdk::{
     pubkey::Pubkey,
     signature::Keypair,
 };
+use tokio::sync::mpsc::Sender;
 use tokio::sync::RwLock;
 use crate::exchange::dexnow::data_structures::instrument::Instrument;
 use crate::exchange::dexnow::data_structures::token::Token;
+use crate::exchange::exchange_update::ExchangeUpdate;
 use crate::exchange::order_book::OrderBook;
 
 pub struct Engine {
     pub orderbook: Arc<RwLock<OrderBook>>,
+    pub update_sender: Option<Sender<ExchangeUpdate>>,
     pub version: u8,
     pub connection: RpcClient,
     pub program_id: Pubkey,
@@ -41,6 +44,7 @@ impl Engine {
         let dexnow_authority = Pubkey::find_program_address(&[b"ndxnt"], &program_id).0;
 
         Engine {
+            update_sender: None,
             orderbook,
             version: 1,
             connection,

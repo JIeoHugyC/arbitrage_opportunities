@@ -26,6 +26,7 @@ impl Engine {
         trading_pair: ETradingPair,
         update_sender: Sender<ExchangeUpdate>,
     ) -> Result<(), Box<dyn std::error::Error>> {
+        self.update_sender = Some(update_sender);
         let token_pubkey = Pubkey::from_str(match trading_pair {
             ETradingPair::BtcUsdc => return Err("DEXnow don't support BTC now".into()),
             ETradingPair::SolUsdc => "A2Pz6rVyXuadFkKnhMXd1w9xgSrZd8m8sEGpuGuyFhaj",
@@ -149,7 +150,7 @@ impl Engine {
                 self.instruments.values().find(|instr| instr.id == instr_id as u64);
             if let Some(target_instrument) = target_instrument {
                 println!("Target instrument: {:?}", target_instrument.dynamic_account);
-                self.connect_and_listen(&target_instrument.dynamic_account, &update_sender).await?;
+                self.connect_and_listen(&target_instrument.dynamic_account).await?;
             }
         }
         Ok(())
