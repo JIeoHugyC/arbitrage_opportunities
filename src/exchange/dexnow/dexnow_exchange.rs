@@ -1,6 +1,6 @@
 use std::env;
 use std::str::FromStr;
-use super::engine::Engine;
+use super::dexnow_engine::DEXnowEngine;
 use crate::exchange::exchange::Exchange;
 use crate::exchange::order_book::OrderBook;
 use async_trait::async_trait;
@@ -14,7 +14,7 @@ use crate::trading_pair::ETradingPair;
 
 pub struct DexnowExchange {
     name: String,
-    engine: Arc<Mutex<Engine>>,
+    engine: Arc<Mutex<DEXnowEngine>>,
     orderbook: Arc<RwLock<OrderBook>>,
 }
 
@@ -25,10 +25,12 @@ impl Exchange for DexnowExchange {
         let root_account = Pubkey::from_str(&*env::var("ROOT_ACCOUNT_PK").unwrap()).unwrap();
         let program_id = Pubkey::from_str(&*env::var("PROGRAM_ID_PK").unwrap()).unwrap();
 
+        let orderbook = Arc::new(RwLock::new(OrderBook::new()));
+        let name = "DEXnow".to_string();
         DexnowExchange {
-            name: "DEXnow".to_string(),
-            engine: Arc::new(Mutex::new(Engine::new(rpc_client, root_account, program_id))),
-            orderbook: Arc::new(RwLock::new(OrderBook::new())),
+            name: name.clone(),
+            engine: Arc::new(Mutex::new(DEXnowEngine::new(rpc_client, root_account, name, program_id, orderbook.clone()))),
+            orderbook,
         }
     }
 
@@ -36,9 +38,9 @@ impl Exchange for DexnowExchange {
         self.name.clone()
     }
 
-    async fn start(&self, _trading_pair: ETradingPair, _update_sender: Sender<ExchangeUpdate>) {
+    async fn start(&self, trading_pair: ETradingPair, update_sender: Sender<ExchangeUpdate>) {
         let mut engine = self.engine.lock().await;
-        engine.initialize().await.unwrap();
+        engine.initialize(trading_pair, update_sender).await.unwrap();
     }
 
     fn get_order_book(&self) -> Arc<RwLock<OrderBook>> {

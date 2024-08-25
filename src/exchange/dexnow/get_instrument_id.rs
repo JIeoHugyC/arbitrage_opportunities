@@ -1,14 +1,14 @@
 use solana_account_decoder::UiDataSliceConfig;
 use solana_sdk::{pubkey::Pubkey};
 use crate::exchange::dexnow::data_structures::constants::*;
-use crate::exchange::dexnow::engine::Engine;
+use crate::exchange::dexnow::dexnow_engine::DEXnowEngine;
 
 pub struct GetInstrIdArgs {
     pub asset_token_id: u32,
     pub base_crncy_token_id: u32,
 }
 
-impl Engine {
+impl DEXnowEngine {
     /// Get instrument ID from asset and base currency token IDs
     ///
     /// # Arguments

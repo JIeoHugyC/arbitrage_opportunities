@@ -1,15 +1,16 @@
 use std::collections::BTreeMap;
-use ordered_float::OrderedFloat;
+use ordered_float::{OrderedFloat};
 use tokio::sync::mpsc::Sender;
 use crate::exchange::bybit::bybit_exchange::BybitExchange;
 use crate::exchange::bybit::ws_spot_orderbook::{OrderBookUpdate, PriceLevel, UpdateType};
-use crate::exchange::exchange_update::{BestPrices, ExchangeUpdate};
+use crate::exchange::exchange_update::{ExchangeUpdate};
 use crate::exchange::order_book::{OrderBook, TPrice, TVolume};
+use crate::exchange::send_orderbook_update::send_orderbook_update;
 
 impl BybitExchange {
     pub(crate) async fn process_orderbook_update(
         &self,
-        order_book_update_sender: &Sender<ExchangeUpdate>,
+        update_sender: &Sender<ExchangeUpdate>,
         update: OrderBookUpdate)
     {
         let mut orderbook = self.orderbook.write().await;
@@ -45,18 +46,14 @@ impl BybitExchange {
         // println!("Applied orderbook {:?} at {}. New seq: {}", update.update_type, update.ts, orderbook.sequence);
         // println!("Best bid: {:?}", orderbook.get_best_bid());
         // println!("Best ask: {:?}", orderbook.get_best_ask());
-        order_book_update_sender.send(ExchangeUpdate {
-            exchange_name: self.name.clone(),
-            best_prices: BestPrices {
-                best_bid: orderbook.get_best_bid(),
-                best_ask: orderbook.get_best_ask(),
-            },
-        })
-            .await
-            .map_err(|e| {
-                eprintln!("Failed to send order book update: {}", e);
-            })
-            .unwrap_or(());
+
+        // *** Notify subscribers about the updated orderbook ***
+        send_orderbook_update(
+            &update_sender,
+            &self.name,
+            &orderbook.get_best_bid(),
+            &orderbook.get_best_ask(),
+        ).await;
     }
     fn apply_updates(&self, side: &mut BTreeMap<TPrice, TVolume>, updates: &[PriceLevel]) {
         for price_level in updates {
