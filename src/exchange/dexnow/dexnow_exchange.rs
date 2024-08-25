@@ -26,9 +26,10 @@ impl Exchange for DexnowExchange {
         let program_id = Pubkey::from_str(&*env::var("PROGRAM_ID_PK").unwrap()).unwrap();
 
         let orderbook = Arc::new(RwLock::new(OrderBook::new()));
+        let name = "DEXnow".to_string();
         DexnowExchange {
-            name: "DEXnow".to_string(),
-            engine: Arc::new(Mutex::new(Engine::new(rpc_client, root_account, program_id, orderbook.clone()))),
+            name: name.clone(),
+            engine: Arc::new(Mutex::new(Engine::new(rpc_client, root_account, name, program_id, orderbook.clone()))),
             orderbook,
         }
     }

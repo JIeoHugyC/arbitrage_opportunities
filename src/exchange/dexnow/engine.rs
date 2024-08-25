@@ -14,6 +14,7 @@ use crate::exchange::exchange_update::ExchangeUpdate;
 use crate::exchange::order_book::OrderBook;
 
 pub struct Engine {
+    pub(super) name: String,
     pub orderbook: Arc<RwLock<OrderBook>>,
     pub update_sender: Option<Sender<ExchangeUpdate>>,
     pub version: u8,
@@ -38,12 +39,14 @@ impl Engine {
     pub fn new(
         connection: RpcClient,
         root_account: Pubkey,
+        name: String,
         program_id: Pubkey,
         orderbook: Arc<RwLock<OrderBook>>,
     ) -> Self {
         let dexnow_authority = Pubkey::find_program_address(&[b"ndxnt"], &program_id).0;
 
         Engine {
+            name,
             update_sender: None,
             orderbook,
             version: 1,

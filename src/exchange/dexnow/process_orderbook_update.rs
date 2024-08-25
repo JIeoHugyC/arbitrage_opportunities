@@ -1,12 +1,13 @@
 use chrono::{DateTime, Utc};
-use ordered_float::OrderedFloat;
+use ordered_float::{Float, OrderedFloat};
 use thiserror::Error;
 use tokio::sync::mpsc::Sender;
 use crate::exchange::bybit::ws_spot_orderbook::OrderBookUpdate;
 use crate::exchange::dexnow::data_structures::instr_dynamic_account::InstrDynamicAccount;
 use crate::exchange::dexnow::engine::Engine;
-use crate::exchange::exchange_update::ExchangeUpdate;
-use crate::exchange::order_book::OrderBook;
+use crate::exchange::exchange_update::{BestPrices, ExchangeUpdate};
+use crate::exchange::order_book::{OrderBook, TPrice};
+use crate::exchange::send_orderbook_update::send_orderbook_update;
 
 #[derive(Error, Debug)]
 pub enum ProcessOrderbookError {
@@ -50,10 +51,13 @@ impl Engine {
         }
 
         // *** Notify subscribers about the updated orderbook ***
-        // update_sender.send(ExchangeUpdate::OrderbookUpdate(OrderBookUpdate {
-        //     update_type
-        //
-        // })).await?;
+        send_orderbook_update(
+            &update_sender,
+            &self.name,
+            orderbook.get_best_bid().unwrap_or(TPrice::min_value()),
+            orderbook.get_best_ask().unwrap_or(TPrice::max_value()),
+        ).await;
+
         Ok(())
     }
 }
