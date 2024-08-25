@@ -20,8 +20,8 @@ impl DEXnowEngine {
                 }
                 let qty = read_i64(data, offset + 8) as f64 / asset_token_dec;
                 orders.push(LinePx {
-                    px: (px * 1e9).round() / 1e9,
-                    qty: (qty * 1e9).round() / 1e9,
+                    px,
+                    qty,
                 });
             }
             orders

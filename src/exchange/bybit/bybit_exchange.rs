@@ -29,20 +29,20 @@ impl Exchange for BybitExchange {
 
     async fn start(&self, trading_pair: ETradingPair, order_book_update_sender: Sender<ExchangeUpdate>) {
         loop {
-            println!("Starting Bybit exchange...");
+            println!("[INFO][Bybit] Starting exchange websocket...");
             match self.connect_and_listen(&trading_pair, &order_book_update_sender).await {
                 Ok(_) => {
-                    println!("Bybit WebSocket connection has been closed");
+                    println!("[WARNING][Bybit] Bybit WebSocket connection has been closed");
                 }
                 Err(e) => {
-                    eprintln!("Error in Bybit WebSocket connection: {:?}", e);
+                    eprintln!("[ERROR][Bybit] Error in Bybit WebSocket connection: {:?}", e);
                 }
             }
 
             // If we're here, it means the connection was closed or an error occurred
             // Wait for a short time before attempting to reconnect
             sleep(Duration::from_secs(1)).await;
-            println!("Attempting to reconnect to Bybit WebSocket...");
+            println!("[INFO][Bybit] Attempting to reconnect to WebSocket...");
         }
     }
 
