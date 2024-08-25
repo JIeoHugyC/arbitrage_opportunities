@@ -1,10 +1,10 @@
 use crate::exchange::dexnow::data_structures::constants::*;
 use crate::exchange::dexnow::data_structures::instr_dynamic_account::InstrDynamicAccount;
 use crate::exchange::dexnow::data_structures::line_px::LinePx;
-use crate::exchange::dexnow::engine::Engine;
+use crate::exchange::dexnow::dexnow_engine::DEXnowEngine;
 use crate::exchange::dexnow::utils::read_basic_types::{read_u32, read_i64};
 
-impl Engine {
+impl DEXnowEngine {
     pub fn decode_instr_dynamic_account(&self, data: &Vec<u8>) -> InstrDynamicAccount {
         let instr_id = read_u32(data, INSTR_DYNAMIC_ACCOUNT_ID_OFFSET) as u64;
         let instr = self.instruments.get(&instr_id).expect("Instrument not found");

@@ -13,7 +13,7 @@ use crate::exchange::dexnow::data_structures::token::Token;
 use crate::exchange::exchange_update::ExchangeUpdate;
 use crate::exchange::order_book::OrderBook;
 
-pub struct Engine {
+pub struct DEXnowEngine {
     pub(super) name: String,
     pub orderbook: Arc<RwLock<OrderBook>>,
     pub update_sender: Option<Sender<ExchangeUpdate>>,
@@ -35,7 +35,7 @@ pub struct Engine {
     pub instruments: std::collections::HashMap<u64, Instrument>,
 }
 
-impl Engine {
+impl DEXnowEngine {
     pub fn new(
         connection: RpcClient,
         root_account: Pubkey,
@@ -45,7 +45,7 @@ impl Engine {
     ) -> Self {
         let dexnow_authority = Pubkey::find_program_address(&[b"ndxnt"], &program_id).0;
 
-        Engine {
+        DEXnowEngine {
             name,
             update_sender: None,
             orderbook,

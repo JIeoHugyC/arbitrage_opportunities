@@ -2,9 +2,9 @@ use solana_account_decoder::UiDataSliceConfig;
 use solana_client::rpc_config::RpcAccountInfoConfig;
 use solana_sdk::pubkey::Pubkey;
 use crate::exchange::dexnow::data_structures::constants::TOKEN_ACCOUNT_ID_OFFSET;
-use crate::exchange::dexnow::engine::Engine;
+use crate::exchange::dexnow::dexnow_engine::DEXnowEngine;
 
-impl Engine {
+impl DEXnowEngine {
     /// Get Token ID from mint public key if this token registered on DEXnow.io
     ///
     /// # Arguments

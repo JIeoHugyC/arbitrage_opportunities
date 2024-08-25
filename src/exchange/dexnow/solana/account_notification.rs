@@ -3,6 +3,7 @@ use base64::Engine;
 use base64::engine::general_purpose;
 
 #[derive(Debug, Deserialize)]
+#[allow(dead_code)]
 pub struct AccountNotification {
     pub jsonrpc: String,
     pub method: String,
@@ -10,6 +11,7 @@ pub struct AccountNotification {
 }
 
 #[derive(Debug, Deserialize)]
+#[allow(dead_code)]
 pub struct Params {
     pub result: Result,
     pub subscription: u64,
@@ -28,6 +30,7 @@ pub struct Context {
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
+#[allow(dead_code)]
 pub struct Value {
     #[serde(deserialize_with = "deserialize_account_data")]
     pub data: Vec<u8>,

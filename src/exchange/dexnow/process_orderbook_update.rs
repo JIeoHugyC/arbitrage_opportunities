@@ -2,7 +2,7 @@ use chrono::{Utc};
 use ordered_float::{OrderedFloat};
 use thiserror::Error;
 use crate::exchange::dexnow::data_structures::instr_dynamic_account::InstrDynamicAccount;
-use crate::exchange::dexnow::engine::Engine;
+use crate::exchange::dexnow::dexnow_engine::DEXnowEngine;
 use crate::exchange::order_book::{OrderBook};
 use crate::exchange::send_orderbook_update::send_orderbook_update;
 
@@ -12,7 +12,7 @@ pub enum ProcessOrderbookError {
     UpdateSenderNotInitialized,
 }
 
-impl Engine {
+impl DEXnowEngine {
     pub async fn process_orderbook_update(
         &self,
         instr_dynamic_account: &InstrDynamicAccount,

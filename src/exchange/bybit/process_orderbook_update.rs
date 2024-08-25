@@ -1,5 +1,5 @@
 use std::collections::BTreeMap;
-use ordered_float::{Float, OrderedFloat};
+use ordered_float::{OrderedFloat};
 use tokio::sync::mpsc::Sender;
 use crate::exchange::bybit::bybit_exchange::BybitExchange;
 use crate::exchange::bybit::ws_spot_orderbook::{OrderBookUpdate, PriceLevel, UpdateType};

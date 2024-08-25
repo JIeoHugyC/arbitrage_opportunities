@@ -1,25 +1,19 @@
 use std::env;
-use std::sync::Arc;
 use std::time::{Duration, Instant};
 use tokio::time::interval;
 use futures_util::{SinkExt, StreamExt};
 use tokio_tungstenite::{connect_async, tungstenite::protocol::Message};
 use solana_sdk::pubkey::Pubkey;
-use solana_sdk::account::Account;
 use solana_sdk::commitment_config::CommitmentLevel;
-use tokio::sync::mpsc::Sender;
-use tokio::sync::RwLock;
-use crate::exchange::dexnow::engine::Engine;
+use crate::exchange::dexnow::dexnow_engine::DEXnowEngine;
 use crate::exchange::dexnow::solana::account_notification::AccountNotification;
 use crate::exchange::dexnow::solana::account_subscribe::SubscribeMessage;
 use crate::exchange::dexnow::solana::subscription_response::SubscriptionResponse;
-use crate::exchange::exchange_update::ExchangeUpdate;
-use crate::exchange::order_book::OrderBook;
 
 const PING_INTERVAL: Duration = Duration::from_secs(1);
 const PONG_TIMEOUT: Duration = Duration::from_secs(5);
 
-impl Engine {
+impl DEXnowEngine {
     pub async fn connect_and_listen(
         &self,
         account_pubkey: &Pubkey

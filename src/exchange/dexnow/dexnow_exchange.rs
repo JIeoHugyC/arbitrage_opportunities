@@ -1,6 +1,6 @@
 use std::env;
 use std::str::FromStr;
-use super::engine::Engine;
+use super::dexnow_engine::DEXnowEngine;
 use crate::exchange::exchange::Exchange;
 use crate::exchange::order_book::OrderBook;
 use async_trait::async_trait;
@@ -14,7 +14,7 @@ use crate::trading_pair::ETradingPair;
 
 pub struct DexnowExchange {
     name: String,
-    engine: Arc<Mutex<Engine>>,
+    engine: Arc<Mutex<DEXnowEngine>>,
     orderbook: Arc<RwLock<OrderBook>>,
 }
 
@@ -29,7 +29,7 @@ impl Exchange for DexnowExchange {
         let name = "DEXnow".to_string();
         DexnowExchange {
             name: name.clone(),
-            engine: Arc::new(Mutex::new(Engine::new(rpc_client, root_account, name, program_id, orderbook.clone()))),
+            engine: Arc::new(Mutex::new(DEXnowEngine::new(rpc_client, root_account, name, program_id, orderbook.clone()))),
             orderbook,
         }
     }
