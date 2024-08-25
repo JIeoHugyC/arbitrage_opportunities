@@ -1,5 +1,6 @@
 use serde::Deserialize;
-use base64;
+use base64::Engine;
+use base64::engine::general_purpose;
 
 #[derive(Debug, Deserialize)]
 pub struct AccountNotification {
@@ -49,7 +50,8 @@ where
 
     let helper = Helper::deserialize(deserializer)?;
     match helper.encoding.as_str() {
-        "base64" => base64::decode(&helper.data).map_err(serde::de::Error::custom),
+        "base64" => general_purpose::STANDARD
+            .decode(&helper.data).map_err(serde::de::Error::custom),
         _ => Err(serde::de::Error::custom(format!("Unsupported encoding: {}", helper.encoding))),
     }
 }
