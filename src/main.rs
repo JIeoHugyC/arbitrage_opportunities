@@ -20,7 +20,7 @@ async fn main() {
     let mut arbitrage_manager = ArbitrageManager::new(ETradingPair::SolUsdc);
     let bybit_exchange = Arc::new(BybitExchange::new());
     let dexnow_exchange = Arc::new(DexnowExchange::new());
-    // arbitrage_manager.add_exchange(bybit_exchange);
+    arbitrage_manager.add_exchange(bybit_exchange);
     arbitrage_manager.add_exchange(dexnow_exchange);
     arbitrage_manager.run().await;
 }
