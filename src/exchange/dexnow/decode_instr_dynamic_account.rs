@@ -6,8 +6,7 @@ use crate::exchange::dexnow::engine::Engine;
 use crate::exchange::dexnow::utils::read_basic_types::{read_u32, read_i64};
 
 impl Engine {
-    pub fn decode_instr_dynamic_account(&self, account: &Account) -> InstrDynamicAccount {
-        let data = &account.data;
+    pub fn decode_instr_dynamic_account(&self, data: &Vec<u8>) -> InstrDynamicAccount {
 
         let instr_id = read_u32(data, INSTR_DYNAMIC_ACCOUNT_ID_OFFSET) as u64;
         let instr = self.instruments.get(&instr_id).expect("Instrument not found");

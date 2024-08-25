@@ -19,7 +19,7 @@ impl Engine {
         let ws_url = env::var("SOLANA_WS_URL").expect("SOLANA_WS_URL must be set");
 
         loop {
-            println!("Connecting to DEXnow WebSocket...");
+            println!("Connecting to Solana WebSocket to listen DEXnow account {}...", account_pubkey);
             let (ws_stream, _) = connect_async(&ws_url).await?;
             let (mut write, mut read) = ws_stream.split();
 
@@ -42,16 +42,14 @@ impl Engine {
                     Some(message) = read.next() => {
                         match message? {
                             Message::Text(text) => {
-                                // println!("Received message: {}", text);  // Log the raw message
                                 if let Ok(subscription) = serde_json::from_str::<SubscriptionResponse>(&text) {
                                     println!("Subscription confirmed: {:?}", subscription);
                                 } else if let Ok(notification) = serde_json::from_str::<AccountNotification>(&text) {
                                     println!("Account notification: {:?}", notification.params.subscription);
-                                    // let account_data = self.extract_account_data(&notification.params.result.value);
-                                    // if let Some(account) = account_data {
-                                    //     let decoded_account = self.decode_instr_dynamic_account(&account);
-                                    //     println!("Decoded account: {:?}", decoded_account);
-                                    // }
+                                    let account_data = notification.params.result.value.data;
+                                    let decoded_account = self.decode_instr_dynamic_account(&account_data);
+                                    println!("Decoded account: {:?}", decoded_account);
+
                                 } else {
                                     println!("Received unknown message format");
                                 }
