@@ -51,8 +51,8 @@ impl BybitExchange {
         send_orderbook_update(
             &update_sender,
             &self.name,
-            orderbook.get_best_bid().unwrap_or(TPrice::min_value()),
-            orderbook.get_best_ask().unwrap_or(TPrice::max_value()),
+            &orderbook.get_best_bid(),
+            &orderbook.get_best_ask(),
         ).await;
     }
     fn apply_updates(&self, side: &mut BTreeMap<TPrice, TVolume>, updates: &[PriceLevel]) {
