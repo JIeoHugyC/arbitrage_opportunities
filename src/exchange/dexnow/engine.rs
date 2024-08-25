@@ -1,13 +1,18 @@
 #![allow(dead_code)]
+
+use std::sync::Arc;
 use solana_client::nonblocking::rpc_client::RpcClient;
 use solana_sdk::{
     pubkey::Pubkey,
     signature::Keypair,
 };
+use tokio::sync::RwLock;
 use crate::exchange::dexnow::data_structures::instrument::Instrument;
 use crate::exchange::dexnow::data_structures::token::Token;
+use crate::exchange::order_book::OrderBook;
 
 pub struct Engine {
+    pub orderbook: Arc<RwLock<OrderBook>>,
     pub version: u8,
     pub connection: RpcClient,
     pub program_id: Pubkey,
@@ -16,7 +21,6 @@ pub struct Engine {
     pub distrib_account: Pubkey,
     pub community_account: Pubkey,
     pub lut_account: Option<Pubkey>,
-    // pub lut: Option<AddressLookupTableAccount>,
     pub wallet: Option<Keypair>,
     pub original_client_id: Option<u64>,
     pub client_primary_account: Option<Pubkey>,
@@ -28,10 +32,16 @@ pub struct Engine {
 }
 
 impl Engine {
-    pub fn new(connection: RpcClient, root_account: Pubkey, program_id: Pubkey) -> Self {
+    pub fn new(
+        connection: RpcClient,
+        root_account: Pubkey,
+        program_id: Pubkey,
+        orderbook: Arc<RwLock<OrderBook>>,
+    ) -> Self {
         let dexnow_authority = Pubkey::find_program_address(&[b"ndxnt"], &program_id).0;
 
         Engine {
+            orderbook,
             version: 1,
             connection,
             program_id,
